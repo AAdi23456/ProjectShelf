@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 300" fill="none">
+  <rect x="120" y="45" width="260" height="210" rx="10" fill="#EEF2FF" stroke="#3B82F6" stroke-width="2"/>
+  <rect x="140" y="75" width="220" height="30" rx="5" fill="white" stroke="#3B82F6" stroke-width="1.5"/>
+  <rect x="140" y="125" width="220" height="30" rx="5" fill="white" stroke="#3B82F6" stroke-width="1.5"/>
+  <rect x="140" y="175" width="220" height="40" rx="5" fill="#3B82F6"/>
+  <text x="250" y="200" font-family="Arial" font-size="16" font-weight="600" fill="white" text-anchor="middle">Sign In</text>
+  <circle cx="170" cy="90" r="5" fill="#3B82F6"/>
+  <circle cx="170" cy="140" r="5" fill="#3B82F6"/>
+  <rect x="185" y="85" width="30" height="10" rx="2" fill="#94A3B8"/>
+  <rect x="185" y="135" width="40" height="10" rx="2" fill="#94A3B8"/>
+  <circle cx="250" cy="250" r="15" fill="#EEF2FF" stroke="#3B82F6" stroke-width="2"/>
+  <path d="M250 242V258M242 250H258" stroke="#3B82F6" stroke-width="2" stroke-linecap="round"/>
+  <path d="M310 40C315.523 40 320 35.5228 320 30C320 24.4772 315.523 20 310 20C304.477 20 300 24.4772 300 30C300 35.5228 304.477 40 310 40Z" fill="#DBEAFE"/>
+  <path d="M80 150C90.4934 150 99 141.493 99 131C99 120.507 90.4934 112 80 112C69.5066 112 61 120.507 61 131C61 141.493 69.5066 150 80 150Z" fill="#DBEAFE"/>
+  <path d="M420 200C425.523 200 430 195.523 430 190C430 184.477 425.523 180 420 180C414.477 180 410 184.477 410 190C410 195.523 414.477 200 420 200Z" fill="#DBEAFE"/>
+</svg> 

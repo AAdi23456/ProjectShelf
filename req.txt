@@ -1,0 +1,26 @@
+Build a web application where designers, developers, and writers can create dynamic portfolios with modular case studies.
+
+User Roles:
+Creator
+Visitor (public view)
+Core Features:
+Authentication + Portfolio Routing:
+/username routes for public portfolios.
+Creator dashboard with editing access.
+Portfolio Builder:
+Create case studies with:
+Project overview
+Media gallery (images, video links)
+Timeline of development process
+Tools/technologies used
+Outcomes (metrics, testimonials)
+Theme Engine:
+Select from 2–3 prebuilt themes.
+Real-time preview.
+Analytics Dashboard:
+View portfolio traffic, engagement, click-throughs.
+Track visitor interest per case study.
+
+
+use next , tailwind , shadcn in frontend 
+use postgres sequlize express for backend

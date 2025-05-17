@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 300" fill="none">
+  <rect x="100" y="40" width="300" height="220" rx="10" fill="#EEF2FF" stroke="#3B82F6" stroke-width="2"/>
+  <rect x="120" y="70" width="120" height="30" rx="5" fill="white" stroke="#3B82F6" stroke-width="1.5"/>
+  <rect x="260" y="70" width="120" height="30" rx="5" fill="white" stroke="#3B82F6" stroke-width="1.5"/>
+  <rect x="120" y="120" width="260" height="30" rx="5" fill="white" stroke="#3B82F6" stroke-width="1.5"/>
+  <rect x="120" y="170" width="260" height="30" rx="5" fill="white" stroke="#3B82F6" stroke-width="1.5"/>
+  <rect x="120" y="220" width="260" height="40" rx="5" fill="#3B82F6"/>
+  <text x="250" y="245" font-family="Arial" font-size="16" font-weight="600" fill="white" text-anchor="middle">Create Account</text>
+  <circle cx="140" cy="85" r="5" fill="#3B82F6"/>
+  <circle cx="280" cy="85" r="5" fill="#3B82F6"/>
+  <circle cx="140" cy="135" r="5" fill="#3B82F6"/>
+  <circle cx="140" cy="185" r="5" fill="#3B82F6"/>
+  <rect x="155" y="80" width="30" height="10" rx="2" fill="#94A3B8"/>
+  <rect x="295" y="80" width="30" height="10" rx="2" fill="#94A3B8"/>
+  <rect x="155" y="130" width="40" height="10" rx="2" fill="#94A3B8"/>
+  <rect x="155" y="180" width="50" height="10" rx="2" fill="#94A3B8"/>
+  <path d="M390 30C395.523 30 400 25.5228 400 20C400 14.4772 395.523 10 390 10C384.477 10 380 14.4772 380 20C380 25.5228 384.477 30 390 30Z" fill="#DBEAFE"/>
+  <path d="M60 120C70.4934 120 79 111.493 79 101C79 90.5066 70.4934 82 60 82C49.5066 82 41 90.5066 41 101C41 111.493 49.5066 120 60 120Z" fill="#DBEAFE"/>
+  <path d="M440 250C445.523 250 450 245.523 450 240C450 234.477 445.523 230 440 230C434.477 230 430 234.477 430 240C430 245.523 434.477 250 440 250Z" fill="#DBEAFE"/>
+  <path d="M90 260C95.5228 260 100 255.523 100 250C100 244.477 95.5228 240 90 240C84.4772 240 80 244.477 80 250C80 255.523 84.4772 260 90 260Z" fill="#DBEAFE"/>
+</svg> 
