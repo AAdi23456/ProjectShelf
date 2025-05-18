@@ -58,7 +58,10 @@ export default function ProjectFormTabs({
       
       <TabsContent value="overview" className="space-y-4">
         <div>
-          <label htmlFor="content" className="block text-sm font-medium mb-1">Project Content</label>
+          <label htmlFor="content" className="block text-sm font-medium mb-1">
+            Project Content
+            <span className="text-red-500 ml-1">*</span>
+          </label>
           <Textarea
             id="content"
             value={project.content}
@@ -66,6 +69,9 @@ export default function ProjectFormTabs({
             placeholder="Describe your project in detail..."
             className="min-h-[300px]"
           />
+          <p className="text-sm text-muted-foreground mt-1">
+            This field is required. Please provide a detailed description of your project.
+          </p>
         </div>
       </TabsContent>
       

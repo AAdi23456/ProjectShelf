@@ -17,7 +17,7 @@ const Project = sequelize.define('Project', {
   },
   slug: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
     unique: true
   },
   content: {
@@ -33,16 +33,17 @@ const Project = sequelize.define('Project', {
     allowNull: true
   },
   timeline: {
-    type: DataTypes.JSON, // Array of {date, title, description}
+    type: DataTypes.JSONB, // Using JSONB for PostgreSQL
     allowNull: true,
     defaultValue: []
   },
   technologies: {
-    type: DataTypes.ARRAY(DataTypes.STRING),
+    type: DataTypes.ARRAY(DataTypes.STRING), // Using PostgreSQL ARRAY
+    allowNull: true,
     defaultValue: []
   },
   outcomes: {
-    type: DataTypes.JSON, // Array of {metric, testimonial}
+    type: DataTypes.JSONB, // Using JSONB for PostgreSQL
     allowNull: true,
     defaultValue: []
   },
@@ -59,7 +60,43 @@ const Project = sequelize.define('Project', {
     allowNull: false
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  hooks: {
+    // Add hooks to handle serialization/deserialization automatically
+    afterFind: (result) => {
+      if (!result) return result;
+      
+      // Handle array results
+      if (Array.isArray(result)) {
+        result.forEach(instance => {
+          parseJsonFields(instance);
+        });
+      } 
+      // Handle single instance
+      else {
+        parseJsonFields(result);
+      }
+      
+      return result;
+    }
+  }
 });
+
+// Helper function to parse JSON fields
+function parseJsonFields(instance) {
+  if (!instance || typeof instance.dataValues !== 'object') return;
+  
+  // Parse JSON strings to objects
+  ['timeline', 'technologies', 'outcomes'].forEach(field => {
+    if (instance.dataValues[field] && typeof instance.dataValues[field] === 'string') {
+      try {
+        instance.dataValues[field] = JSON.parse(instance.dataValues[field]);
+      } catch (error) {
+        instance.dataValues[field] = [];
+        console.error(`Error parsing ${field} for project ${instance.id}:`, error);
+      }
+    }
+  });
+}
 
 export default Project; 

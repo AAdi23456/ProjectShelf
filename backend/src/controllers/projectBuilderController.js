@@ -28,6 +28,22 @@ export const saveProjectDraft = async (req, res) => {
       mediaItems
     } = req.body;
 
+    // Validate required fields
+    if (!title || title.trim() === '') {
+      await transaction.rollback();
+      return res.status(400).json({ message: 'Project title is required' });
+    }
+
+    if (!technologies || !Array.isArray(technologies) || technologies.length === 0) {
+      await transaction.rollback();
+      return res.status(400).json({ message: 'At least one technology must be specified' });
+    }
+
+    if (!content || content.trim() === '') {
+      await transaction.rollback();
+      return res.status(400).json({ message: 'Project content is required' });
+    }
+
     let project;
     
     if (id === 'new') {
@@ -46,7 +62,7 @@ export const saveProjectDraft = async (req, res) => {
         slug = `${slug}-${Math.floor(Math.random() * 1000)}`;
       }
       
-      // Create new project
+      // Create new project - using native types
       project = await Project.create({
         title,
         description,
@@ -201,13 +217,6 @@ export const publishProject = async (req, res) => {
     
     if (!project) {
       return res.status(404).json({ message: 'Project not found or you do not have permission to edit it' });
-    }
-    
-    // Validate project data before publishing
-    if (!project.title || !project.description) {
-      return res.status(400).json({ 
-        message: 'Cannot publish: Project must have at least a title and description'
-      });
     }
     
     await project.update({
@@ -402,7 +411,7 @@ export const updateProjectTimeline = async (req, res) => {
       return res.status(404).json({ message: 'Project not found or you do not have permission to edit it' });
     }
     
-    // Update timeline
+    // Update timeline with native JSONB
     await project.update({ timeline });
     
     res.status(200).json({ 
@@ -440,7 +449,7 @@ export const updateProjectTechnologies = async (req, res) => {
       return res.status(404).json({ message: 'Project not found or you do not have permission to edit it' });
     }
     
-    // Update technologies
+    // Update technologies with native array
     await project.update({ technologies });
     
     res.status(200).json({ 
@@ -478,7 +487,7 @@ export const updateProjectOutcomes = async (req, res) => {
       return res.status(404).json({ message: 'Project not found or you do not have permission to edit it' });
     }
     
-    // Update outcomes
+    // Update outcomes with native JSONB
     await project.update({ outcomes });
     
     res.status(200).json({ 

@@ -118,140 +118,173 @@ export default function MediaGalleryEditor({
   };
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-4">
-        <h3 className="text-lg font-medium">Add Media</h3>
-        
-        <div className="flex space-x-2">
-          <Button
-            type="button"
-            variant={mediaType === 'IMAGE' ? 'default' : 'outline'}
-            onClick={() => setMediaType('IMAGE')}
-            className="flex-1"
-          >
-            <ImageIcon className="mr-2 h-4 w-4" />
-            Image
-          </Button>
-          
-          <Button
-            type="button"
-            variant={mediaType === 'VIDEO' ? 'default' : 'outline'}
-            onClick={() => setMediaType('VIDEO')}
-            className="flex-1"
-          >
-            <Video className="mr-2 h-4 w-4" />
-            Video
-          </Button>
+    <div className="space-y-8">
+      <div className="space-y-5">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-medium">Add Media</h3>
+          <div className="text-xs text-muted-foreground bg-secondary/30 px-2 py-1 rounded-full">
+            {mediaItems.length} items
+          </div>
         </div>
         
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <label className="text-sm font-medium">
-              {mediaType === 'IMAGE' ? 'Image URL' : 'Video URL'}
-            </label>
+        <div className="bg-gray-50 border rounded-lg p-5 space-y-4">
+          <div className="flex space-x-2">
+            <Button
+              type="button"
+              variant={mediaType === 'IMAGE' ? 'default' : 'outline'}
+              onClick={() => setMediaType('IMAGE')}
+              className="flex-1"
+              size="sm"
+            >
+              <ImageIcon className="mr-2 h-4 w-4" />
+              Image
+            </Button>
             
-            {mediaType === 'VIDEO' && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className="flex items-center text-xs text-muted-foreground">
-                      <Info className="h-3 w-3 mr-1" />
-                      Supported formats
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-xs">
-                    <p>YouTube URLs (e.g., https://www.youtube.com/watch?v=VIDEO_ID)</p>
-                    <p>Vimeo URLs (e.g., https://vimeo.com/VIDEO_ID)</p>
-                    <p>Direct embed URLs (iframe src URLs)</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+            <Button
+              type="button"
+              variant={mediaType === 'VIDEO' ? 'default' : 'outline'}
+              onClick={() => setMediaType('VIDEO')}
+              className="flex-1"
+              size="sm"
+            >
+              <Video className="mr-2 h-4 w-4" />
+              Video
+            </Button>
+          </div>
+          
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium">
+                {mediaType === 'IMAGE' ? 'Image URL' : 'Video URL'}
+              </label>
+              
+              {mediaType === 'VIDEO' && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="flex items-center text-xs text-muted-foreground hover:text-foreground cursor-help">
+                        <Info className="h-3 w-3 mr-1" />
+                        Supported formats
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs">
+                      <p>YouTube URLs (e.g., https://www.youtube.com/watch?v=VIDEO_ID)</p>
+                      <p>Vimeo URLs (e.g., https://vimeo.com/VIDEO_ID)</p>
+                      <p>Direct embed URLs (iframe src URLs)</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+            </div>
+            
+            <Input
+              value={url}
+              onChange={handleUrlChange}
+              placeholder={mediaType === 'IMAGE' 
+                ? 'https://example.com/image.jpg'
+                : 'https://www.youtube.com/watch?v=VIDEO_ID'
+              }
+              className={urlError ? "border-destructive" : ""}
+            />
+            
+            <div className="flex justify-between items-center">
+              <p className="text-xs text-muted-foreground">
+                {mediaType === 'IMAGE' 
+                  ? 'Direct link to image (JPG, PNG, etc)'
+                  : 'Regular YouTube/Vimeo links will be automatically converted to embed format'
+                }
+              </p>
+              <p className={`text-xs ${url.length > MAX_URL_LENGTH * 0.9 ? "text-destructive" : "text-muted-foreground"}`}>
+                {url.length} / {MAX_URL_LENGTH}
+              </p>
+            </div>
+            
+            {urlError && (
+              <p className="text-xs text-destructive">{urlError}</p>
             )}
           </div>
           
-          <Input
-            value={url}
-            onChange={handleUrlChange}
-            placeholder={mediaType === 'IMAGE' 
-              ? 'https://example.com/image.jpg'
-              : 'https://www.youtube.com/watch?v=VIDEO_ID'
-            }
-            className={urlError ? "border-destructive" : ""}
-          />
-          
-          <div className="flex justify-between items-center">
-            <p className="text-xs text-muted-foreground">
-              {mediaType === 'IMAGE' 
-                ? 'Direct link to image (JPG, PNG, etc)'
-                : 'Regular YouTube/Vimeo links will be automatically converted to embed format'
-              }
-            </p>
-            <p className={`text-xs ${url.length > MAX_URL_LENGTH * 0.9 ? "text-destructive" : "text-muted-foreground"}`}>
-              {url.length} / {MAX_URL_LENGTH}
-            </p>
+          <div>
+            <label className="text-sm font-medium">Caption (optional)</label>
+            <Textarea
+              value={caption}
+              onChange={(e) => setCaption(e.target.value)}
+              placeholder="Add a description for this media..."
+              className="mt-1 h-20"
+            />
           </div>
           
-          {urlError && (
-            <p className="text-xs text-destructive">{urlError}</p>
-          )}
+          <Button
+            type="button"
+            onClick={addMediaItem}
+            disabled={!url.trim() || !!urlError}
+            className="w-full"
+          >
+            <Upload className="mr-2 h-4 w-4" />
+            Add {mediaType.toLowerCase()}
+          </Button>
         </div>
-        
-        <div>
-          <label className="text-sm font-medium">Caption (optional)</label>
-          <Textarea
-            value={caption}
-            onChange={(e) => setCaption(e.target.value)}
-            placeholder="Add a caption for this media"
-            className="h-20"
-          />
-        </div>
-        
-        <Button 
-          type="button" 
-          onClick={addMediaItem}
-          className="w-full"
-        >
-          <Upload className="mr-2 h-4 w-4" />
-          Add {mediaType === 'IMAGE' ? 'Image' : 'Video'}
-        </Button>
       </div>
       
       {mediaItems.length > 0 && (
         <div className="space-y-4">
-          <h3 className="text-lg font-medium">Media Gallery</h3>
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-medium">Media Gallery</h3>
+            <p className="text-xs text-muted-foreground">
+              Drag to reorder • Click star to set as cover image
+            </p>
+          </div>
           
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {mediaItems.map((item, index) => (
-              <div key={item.id || index} className="relative rounded-md border overflow-hidden group">
-                <MediaRenderer 
-                  media={item} 
-                  aspectRatio={item.type === 'VIDEO' ? 'video' : 'square'}
-                  isPreview={true}
-                />
-                
-                <div className="absolute top-2 right-2 flex space-x-1">
-                  {item.type === 'IMAGE' && (
-                    <button
+              <div 
+                key={item.id || index} 
+                className="group relative bg-gray-50 border rounded-lg overflow-hidden transition-all hover:shadow-md"
+              >
+                <div className="absolute top-0 left-0 w-full bg-gradient-to-b from-black/50 to-transparent p-3 z-10 flex justify-between items-start">
+                  <div>
+                    <Button
                       type="button"
+                      variant={coverImage === item.url ? "default" : "outline"}
+                      size="icon"
+                      className="h-7 w-7 rounded-full bg-black/30 hover:bg-black/50 border-0"
                       onClick={() => setCoverImage(item.url)}
-                      className={`rounded-full p-1 bg-background/80 hover:bg-background transition-colors ${
-                        coverImage === item.url ? 'text-yellow-500' : 'text-muted-foreground'
-                      }`}
-                      title="Set as cover image"
                     >
-                      <Star className="h-4 w-4" />
-                    </button>
-                  )}
+                      <Star className={`h-3 w-3 ${coverImage === item.url ? "fill-yellow-400 text-yellow-400" : "text-white"}`} />
+                    </Button>
+                  </div>
                   
-                  <button
+                  <Button
                     type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="h-7 w-7 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                     onClick={() => removeMediaItem(index)}
-                    className="rounded-full p-1 bg-background/80 hover:bg-background text-destructive transition-colors"
-                    title="Remove"
                   >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
                 </div>
+                
+                <div className="relative h-48">
+                  <MediaRenderer 
+                    media={{
+                      url: item.url,
+                      type: item.type,
+                      caption: item.caption
+                    }}
+                    aspectRatio="auto"
+                    isPreview={true}
+                    showCaption={false}
+                  />
+                </div>
+                
+                {item.caption && (
+                  <div className="p-3 bg-white border-t">
+                    <p className="text-sm">{item.caption}</p>
+                  </div>
+                )}
+                
+                <div className="absolute inset-0 border-2 border-primary opacity-0 pointer-events-none transition-opacity rounded-lg"></div>
               </div>
             ))}
           </div>

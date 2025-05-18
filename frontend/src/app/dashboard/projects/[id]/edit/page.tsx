@@ -95,8 +95,30 @@ export default function ProjectEditorPage() {
   
   const saveProject = async (showToast = true, shouldRedirect = false) => {
     try {
+      // Validate project data before saving
+      if (!project.title || project.title.trim() === '') {
+        toast.error('Project title is required');
+        return;
+      }
+
+      if (!project.description || project.description.trim() === '') {
+        toast.error('Short description is required');
+        return;
+      }
+
+      if (!project.technologies || project.technologies.length === 0) {
+        toast.error('At least one technology must be specified');
+        setActiveTab('technologies');
+        return;
+      }
+
+      if (!project.content || project.content.trim() === '') {
+        toast.error('Project content is required');
+        setActiveTab('content');
+        return;
+      }
+      
       setSaving(true);
-      setRedirectAfterSave(shouldRedirect);
       
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/builder/${projectId}`, {
         method: 'POST',
@@ -130,32 +152,13 @@ export default function ProjectEditorPage() {
       const data = await response.json();
       console.log('Project saved successfully:', data);
       
-      if (projectId === 'new' && data.project.id) {
-        if (shouldRedirect) {
-          // Show success message
-          toast.success('Project created successfully! Redirecting to projects page...');
-          
-          // Redirect to the projects page after a short delay
-          setTimeout(() => {
-            router.push('/dashboard/projects');
-          }, 1500);
-        } else {
-          // Just update the URL without redirecting
-          window.history.replaceState(null, '', `/dashboard/projects/${data.project.id}/edit`);
-          // Update local state with the saved data and new ID
-          setProject(prev => ({ ...prev, ...data.project }));
-          if (showToast) {
-            toast.success('Project saved successfully');
-          }
-        }
-      } else {
-        // Update local state with the saved data
-        setProject(prev => ({ ...prev, ...data.project }));
-        
-        if (showToast) {
-          toast.success('Project saved successfully');
-        }
-      }
+      // Show success message
+      toast.success('Project saved successfully! Redirecting to dashboard...');
+      
+      // Always redirect to the dashboard after successful save
+      setTimeout(() => {
+        router.push('/dashboard/projects');
+      }, 1500);
     } catch (err) {
       console.error('Error saving project:', err);
       toast.error(err instanceof Error ? err.message : 'Failed to save project');
@@ -168,6 +171,7 @@ export default function ProjectEditorPage() {
     try {
       if (!project.id) {
         await saveProject();
+        return; // saveProject will handle the redirect
       }
       
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/builder/${project.id}/publish`, {
@@ -183,9 +187,12 @@ export default function ProjectEditorPage() {
         throw new Error(errorData.message || 'Failed to publish project');
       }
       
-      const data = await response.json();
-      setProject(prev => ({ ...prev, ...data.project }));
-      toast.success('Project published successfully');
+      toast.success('Project published successfully! Redirecting to dashboard...');
+      
+      // Redirect to the dashboard after publishing
+      setTimeout(() => {
+        router.push('/dashboard/projects');
+      }, 1500);
     } catch (err) {
       console.error('Error publishing project:', err);
       toast.error(err instanceof Error ? err.message : 'Failed to publish project');
@@ -206,9 +213,12 @@ export default function ProjectEditorPage() {
         throw new Error('Failed to unpublish project');
       }
       
-      const data = await response.json();
-      setProject(prev => ({ ...prev, ...data.project }));
-      toast.success('Project unpublished successfully');
+      toast.success('Project unpublished successfully! Redirecting to dashboard...');
+      
+      // Redirect to the dashboard after unpublishing
+      setTimeout(() => {
+        router.push('/dashboard/projects');
+      }, 1500);
     } catch (err) {
       console.error('Error unpublishing project:', err);
       toast.error('Failed to unpublish project');
@@ -252,22 +262,13 @@ export default function ProjectEditorPage() {
           </Button>
           
           <Button 
-            size="sm" 
-            onClick={() => saveProject(true, false)}
+            size="sm"
+            variant="default"
+            onClick={() => saveProject(true)}
             disabled={saving}
           >
             {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
-            Save Draft
-          </Button>
-          
-          <Button 
-            size="sm"
-            variant="default"
-            onClick={() => saveProject(true, true)}
-            disabled={saving}
-          >
-            {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Check className="mr-2 h-4 w-4" />}
-            Save & Finish
+            Save Project
           </Button>
           
           {project.id && (
@@ -282,7 +283,7 @@ export default function ProjectEditorPage() {
             ) : (
               <Button 
                 size="sm" 
-                variant="default"
+                variant="outline"
                 onClick={publishProject}
               >
                 <Eye className="mr-2 h-4 w-4" />
@@ -309,7 +310,10 @@ export default function ProjectEditorPage() {
         <div className="space-y-8">
           <div className="space-y-4">
             <div>
-              <label htmlFor="title" className="block text-sm font-medium mb-1">Project Title</label>
+              <label htmlFor="title" className="block text-sm font-medium mb-1">
+                Project Title
+                <span className="text-red-500 ml-1">*</span>
+              </label>
               <Input
                 id="title"
                 value={project.title}
@@ -320,7 +324,10 @@ export default function ProjectEditorPage() {
             </div>
             
             <div>
-              <label htmlFor="description" className="block text-sm font-medium mb-1">Short Description</label>
+              <label htmlFor="description" className="block text-sm font-medium mb-1">
+                Short Description
+                <span className="text-red-500 ml-1">*</span>
+              </label>
               <Textarea
                 id="description"
                 value={project.description}

@@ -51,7 +51,10 @@ export default function TechnologiesEditor({ technologies = [], onChange }: Tech
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        <h3 className="text-lg font-medium">Add Technologies</h3>
+        <h3 className="text-lg font-medium">
+          Add Technologies
+          <span className="text-red-500 ml-1">*</span>
+        </h3>
         
         <div className="flex space-x-2">
           <Input
@@ -72,7 +75,7 @@ export default function TechnologiesEditor({ technologies = [], onChange }: Tech
         </div>
         
         <p className="text-sm text-muted-foreground">
-          Press Enter to add a technology
+          Press Enter to add a technology. At least one technology is required.
         </p>
       </div>
       
