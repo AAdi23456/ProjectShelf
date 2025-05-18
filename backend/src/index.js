@@ -18,12 +18,7 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 // Enhanced CORS configuration
-app.use(cors({
-  origin: 'https://project-shelf-hqb4.vercel.app', // Allow all origins
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow specific methods
-  allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers
-  credentials: true // Allow cookies
-}));
+app.use(cors());
 
 app.use(express.json());
 
