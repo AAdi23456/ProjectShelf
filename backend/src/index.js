@@ -7,6 +7,7 @@ import userRoutes from './routes/userRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
 import portfolioRoutes from './routes/portfolioRoutes.js';
 import projectBuilderRoutes from './routes/projectBuilderRoutes.js';
+import analyticsRoutes from './routes/analyticsRoutes.js';
 import { User, Project, Media } from './models/index.js';
 
 // Load environment variables
@@ -56,6 +57,7 @@ app.get('/debug', async (req, res) => {
 app.use('/api/users', userRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/builder', projectBuilderRoutes); // New project builder routes
+app.use('/api/analytics', analyticsRoutes); // Analytics routes
 app.use('/portfolios', portfolioRoutes); // Username-based routes (note: no /api prefix for cleaner URLs)
 
 // Function to seed database with sample data if none exists

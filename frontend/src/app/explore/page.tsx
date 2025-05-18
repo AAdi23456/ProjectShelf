@@ -16,8 +16,15 @@ interface Portfolio {
   projectCount: number;
 }
 
+interface PaginationInfo {
+  total: number;
+  page: number;
+  pages: number;
+}
+
 export default function ExplorePage() {
   const [portfolios, setPortfolios] = useState<Portfolio[]>([]);
+  const [pagination, setPagination] = useState<PaginationInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
@@ -25,7 +32,12 @@ export default function ExplorePage() {
     const fetchPublishedPortfolios = async () => {
       try {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/portfolios/published`);
-        setPortfolios(response.data);
+        if (response.data && response.data.users) {
+          setPortfolios(response.data.users);
+          setPagination(response.data.pagination);
+        } else {
+          setPortfolios(response.data || []);
+        }
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching published portfolios:', error);
@@ -38,10 +50,9 @@ export default function ExplorePage() {
 
   const trackPortfolioView = async (username: string) => {
     try {
-      // Track portfolio view analytics
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/portfolios/analytics/view`, {
-        username,
-        type: 'portfolio'
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/analytics/portfolio-visit`, {
+        userId: portfolios.find(p => p.username === username)?.id,
+        viewerId: null
       });
       router.push(`/${username}`);
     } catch (error) {
@@ -89,6 +100,14 @@ export default function ExplorePage() {
               </CardFooter>
             </Card>
           ))}
+        </div>
+      )}
+      
+      {pagination && pagination.pages > 1 && (
+        <div className="flex justify-center mt-8">
+          <p className="text-sm text-muted-foreground">
+            Showing page {pagination.page} of {pagination.pages} ({pagination.total} portfolios)
+          </p>
         </div>
       )}
     </div>

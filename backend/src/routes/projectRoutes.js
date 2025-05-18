@@ -70,22 +70,45 @@ router.get('/:slug', async (req, res) => {
       return;
     }
 
-    // Increment view count in analytics
-    const today = new Date().toISOString().split('T')[0];
-    const analyticsId = `${project.id}_${today}`;
-    
-    const [analytics] = await Analytics.findOrCreate({
-      where: { id: analyticsId },
-      defaults: {
-        projectId: project.id,
-        userId: project.userId,
-        views: 1,
-        date: new Date()
+    // Check if current user is the creator of this project
+    const userId = req.user?.id;
+    const isCreator = userId && userId === project.userId;
+
+    // Only track views if the viewer is not the creator
+    if (!isCreator) {
+      try {
+        // Increment view count in analytics
+        const today = new Date().toISOString().split('T')[0];
+        
+        // Find analytics record for today or create a new one
+        const [analytics] = await Analytics.findOrCreate({
+          where: { 
+            projectId: project.id, 
+            date: {
+              [Op.gte]: new Date(today),
+              [Op.lt]: new Date(new Date(today).getTime() + 24 * 60 * 60 * 1000)
+            }
+          },
+          defaults: {
+            projectId: project.id,
+            userId: project.userId,
+            views: 1,
+            date: new Date()
+          }
+        });
+        
+        if (analytics) {
+          // Only increment if it's an existing record (not newly created)
+          if (!analytics.isNewRecord) {
+            await analytics.increment('views');
+          }
+        }
+        
+        console.log(`View tracked for project ${project.id}`);
+      } catch (error) {
+        console.error('Error tracking view:', error);
+        // Continue even if tracking fails
       }
-    });
-    
-    if (analytics && analytics.id) {
-      await analytics.increment('views');
     }
 
     res.status(200).json({ project });

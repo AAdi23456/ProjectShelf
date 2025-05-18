@@ -1,5 +1,5 @@
-import { User, Project, Media } from '../models/index.js';
-import Analytics from '../models/Analytics.js';
+import { User, Project, Media, ProjectView, PortfolioVisit, Analytics } from '../models/index.js';
+import { Op } from 'sequelize';
 
 // Get a user's portfolio by username
 export const getUserPortfolio = async (req, res) => {
@@ -33,17 +33,17 @@ export const getUserPortfolio = async (req, res) => {
       ]
     });
     
-    // Track view if not the user viewing their own portfolio
+    // Track portfolio visit if not the user viewing their own portfolio
     if (req.user && req.user.id !== user.id) {
-      await Analytics.create({
-        views: 1,
-        userId: user.id
+      await PortfolioVisit.create({
+        userId: user.id,
+        viewerId: req.user.id
       });
     } else if (!req.user) {
-      // Anonymous view
-      await Analytics.create({
-        views: 1,
-        userId: user.id
+      // Anonymous visit
+      await PortfolioVisit.create({
+        userId: user.id,
+        viewerId: null
       });
     }
     
@@ -115,82 +115,99 @@ export const getUserProject = async (req, res) => {
       });
     }
     
-    // Track engagement if not the user viewing their own project
-    if (req.user && req.user.id !== user.id) {
-      await Analytics.create({
-        engagement: 1,
-        clickThroughs: 1,
-        projectId: project.id,
-        userId: user.id
-      });
-    } else if (!req.user) {
-      // Anonymous engagement
-      await Analytics.create({
-        engagement: 1,
-        clickThroughs: 1,
-        projectId: project.id,
-        userId: user.id
-      });
+    // Only track the view if the viewer is not the owner
+    if (!isOwner) {
+      try {
+        // 1. Track individual view in ProjectView table
+        await ProjectView.create({
+          projectId: project.id,
+          ownerId: user.id,
+          viewerId: req.user ? req.user.id : null
+        });
+        
+        // 2. Update analytics for aggregate view count
+        const today = new Date().toISOString().split('T')[0];
+        
+        // Find analytics record for today or create a new one
+        const [analytics] = await Analytics.findOrCreate({
+          where: { 
+            projectId: project.id, 
+            date: {
+              [Op.gte]: new Date(today),
+              [Op.lt]: new Date(new Date(today).getTime() + 24 * 60 * 60 * 1000)
+            }
+          },
+          defaults: {
+            projectId: project.id,
+            userId: project.userId,
+            views: 1,
+            date: new Date()
+          }
+        });
+        
+        if (analytics && !analytics.isNewRecord) {
+          await analytics.increment('views');
+        }
+        
+        console.log('Project view tracked successfully');
+      } catch (trackError) {
+        console.error('Error tracking project view:', trackError);
+        // Continue even if tracking fails
+      }
     }
     
-    // Prepare safe project data with default values for null fields
-    const safeProject = {
-      ...project.toJSON(),
-      title: project.title || '',
-      description: project.description || '',
-      content: project.content || '',
-      coverImage: project.coverImage || null,
-      timeline: project.timeline || [],
-      technologies: project.technologies || [],
-      outcomes: project.outcomes || [],
-      mediaItems: project.mediaItems || []
-    };
-    
-    res.json({ user, project: safeProject });
+    res.json({ project });
   } catch (error) {
     console.error('Error getting user project:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
 
-// Get all published portfolios
+// Get published portfolios
 export const getPublishedPortfolios = async (req, res) => {
   try {
-    const users = await User.findAll({
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 12;
+    const offset = (page - 1) * limit;
+    
+    // First, find users who have published projects
+    const usersWithProjects = await User.findAll({
       attributes: ['id', 'username', 'name', 'bio', 'avatarUrl'],
       include: [
         {
           model: Project,
           as: 'projects',
-          attributes: ['id'],
           where: { isPublished: true },
-          required: true
+          required: true,
+          attributes: ['id'], // Just get IDs for counting
         }
-      ]
+      ],
+      order: [['createdAt', 'DESC']]
     });
-
-    // Transform data for frontend display with safe default values
-    const portfolios = await Promise.all(users.map(async (user) => {
-      const projectCount = await Project.count({
-        where: { 
-          userId: user.id,
-          isPublished: true
-        }
+    
+    // Sort and paginate the results manually
+    const totalCount = usersWithProjects.length;
+    const paginatedUsers = usersWithProjects
+      .slice(offset, offset + limit)
+      .map(user => {
+        const userData = user.toJSON();
+        return {
+          ...userData,
+          projectCount: userData.projects.length,
+          projects: undefined // Remove the projects array
+        };
       });
-
-      return {
-        id: user.id,
-        username: user.username,
-        displayName: user.name || user.username,
-        bio: user.bio || '',
-        profileImage: user.avatarUrl || null,
-        projectCount
-      };
-    }));
-
-    res.json(portfolios);
+    
+    res.status(200).json({
+      users: paginatedUsers,
+      pagination: {
+        total: totalCount,
+        page,
+        pages: Math.ceil(totalCount / limit)
+      }
+    });
   } catch (error) {
     console.error('Error getting published portfolios:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error getting published portfolios' });
   }
 }; 
