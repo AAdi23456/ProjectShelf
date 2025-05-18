@@ -23,17 +23,17 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: 'http://localhost:4000/api/:path*',
+        destination: 'https://projectshelf-93gi.onrender.com/api/:path*',
       },
       {
         source: '/portfolios/:path*',
-        destination: 'http://localhost:4000/portfolios/:path*',
+        destination: 'https://projectshelf-93gi.onrender.com/portfolios/:path*',
       },
     ];
   },
   
   env: {
-    NEXT_PUBLIC_API_URL: 'http://localhost:4000',
+    NEXT_PUBLIC_API_URL: 'https://projectshelf-93gi.onrender.com',
   },
 };
 
