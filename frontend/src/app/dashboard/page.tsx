@@ -144,14 +144,14 @@ export default function DashboardPage() {
             </p>
           </div>
           <div className="flex gap-3">
-            <Button 
+            {/* <Button 
               onClick={() => router.push('/dashboard/analytics')}
               variant="outline"
               className="gap-2"
             >
               <BarChart3 className="h-4 w-4" />
               <span>Analytics</span>
-            </Button>
+            </Button> */}
             <Button 
               onClick={() => router.push('/dashboard/projects/new/edit')}
               className="gap-2"
