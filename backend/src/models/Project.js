@@ -33,17 +33,17 @@ const Project = sequelize.define('Project', {
     allowNull: true
   },
   timeline: {
-    type: DataTypes.JSONB, // Using JSONB for PostgreSQL
+    type: DataTypes.JSONB,
     allowNull: true,
     defaultValue: []
   },
   technologies: {
-    type: DataTypes.ARRAY(DataTypes.STRING), // Using PostgreSQL ARRAY
+    type: DataTypes.ARRAY(DataTypes.STRING),
     allowNull: true,
     defaultValue: []
   },
   outcomes: {
-    type: DataTypes.JSONB, // Using JSONB for PostgreSQL
+    type: DataTypes.JSONB,
     allowNull: true,
     defaultValue: []
   },

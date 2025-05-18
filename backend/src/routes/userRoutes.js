@@ -22,6 +22,7 @@ const generateToken = (user) => {
 router.post('/register', async (req, res) => {
   try {
     const { email, password, username, name } = req.body;
+    console.log(`Registration attempt for email: ${email}, username: ${username}`);
 
     // Check if user already exists
     const existingUser = await User.findOne({
@@ -34,6 +35,7 @@ router.post('/register', async (req, res) => {
     });
 
     if (existingUser) {
+      console.log(`Registration failed: User with email ${email} or username ${username} already exists`);
       res.status(400).json({ 
         message: 'User with this email or username already exists' 
       });
@@ -60,12 +62,13 @@ router.post('/register', async (req, res) => {
     const userResponse = user.toJSON();
     delete userResponse.password;
 
+    console.log(`Registration successful for user: ${email}, ID: ${user.id}`);
     res.status(201).json({ 
       user: userResponse,
       token 
     });
   } catch (error) {
-    console.error('Registration error:', error);
+    console.error('Registration error details:', error);
     res.status(500).json({ message: 'Server error during registration' });
   }
 });
@@ -74,6 +77,7 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log(`Login attempt for email: ${email}`);
 
     // Find user by email
     const user = await User.findOne({
@@ -81,13 +85,17 @@ router.post('/login', async (req, res) => {
     });
 
     if (!user) {
+      console.log(`Login failed: User with email ${email} not found`);
       res.status(401).json({ message: 'Invalid credentials' });
       return;
     }
 
     // Verify password
     const isPasswordValid = await bcrypt.compare(password, user.password);
+    console.log(`Password validation result: ${isPasswordValid}`);
+    
     if (!isPasswordValid) {
+      console.log(`Login failed: Invalid password for user ${email}`);
       res.status(401).json({ message: 'Invalid credentials' });
       return;
     }
@@ -99,12 +107,13 @@ router.post('/login', async (req, res) => {
     const userResponse = user.toJSON();
     delete userResponse.password;
 
+    console.log(`Login successful for user: ${email}`);
     res.status(200).json({ 
       user: userResponse,
       token
     });
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('Login error details:', error);
     res.status(500).json({ message: 'Server error during login' });
   }
 });
