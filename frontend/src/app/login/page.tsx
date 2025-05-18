@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from '@/lib/hooks/useToast';
-import { Eye, EyeOff, Mail, Lock, Github, Twitter } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -86,36 +86,17 @@ export default function LoginPage() {
               }}
             />
           </div>
-          <div className="text-center space-y-6">
-            <h1 className="text-4xl font-bold text-gray-900 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">Welcome back</h1>
-            <p className="text-gray-600 max-w-md text-lg">
-              Log in to continue creating amazing case studies and portfolios that showcase your work.
+          
+          <div className="space-y-4 text-center">
+            <h1 className="text-3xl font-bold text-gray-900">Welcome back!</h1>
+            <p className="text-gray-600 max-w-md">
+              Sign in to manage your portfolio, track your project analytics, and showcase your work to the world.
             </p>
-            <div className="grid grid-cols-3 gap-3 pt-4">
-              <div className="p-4 bg-white/70 backdrop-blur-sm rounded-lg shadow-sm hover:shadow-md transition duration-300 transform hover:scale-105">
-                <svg className="h-8 w-8 text-blue-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <p className="mt-2 text-center text-sm font-medium text-gray-600">Create Projects</p>
-              </div>
-              <div className="p-4 bg-white/70 backdrop-blur-sm rounded-lg shadow-sm hover:shadow-md transition duration-300 transform hover:scale-105">
-                <svg className="h-8 w-8 text-indigo-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                </svg>
-                <p className="mt-2 text-center text-sm font-medium text-gray-600">Share Globally</p>
-              </div>
-              <div className="p-4 bg-white/70 backdrop-blur-sm rounded-lg shadow-sm hover:shadow-md transition duration-300 transform hover:scale-105">
-                <svg className="h-8 w-8 text-purple-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                </svg>
-                <p className="mt-2 text-center text-sm font-medium text-gray-600">Track Analytics</p>
-              </div>
-            </div>
           </div>
         </div>
         
         {/* Right Side - Login Form */}
-        <Card className="w-full max-w-md shadow-2xl border-0 mx-auto bg-white/90 backdrop-blur-sm transition-all duration-300 hover:shadow-blue-100">
+        <Card className="shadow-lg border-none">
           <form onSubmit={handleSubmit}>
             <CardHeader className="space-y-2 pb-6">
               <div className="mx-auto bg-gradient-to-br from-blue-600 to-indigo-600 w-16 h-16 rounded-full flex items-center justify-center mb-2">
@@ -133,7 +114,8 @@ export default function LoginPage() {
                 </div>
               )}
             </CardHeader>
-            <CardContent className="space-y-6 pt-2">
+            
+            <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-medium text-gray-700 flex items-center gap-2">
                   <Mail className="h-4 w-4 text-gray-500" />
@@ -151,16 +133,12 @@ export default function LoginPage() {
                   />
                 </div>
               </div>
+              
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                    <Lock className="h-4 w-4 text-gray-500" />
-                    Password
-                  </Label>
-                  <Link href="/reset-password" className="text-xs text-blue-600 hover:text-blue-800 font-medium transition-colors">
-                    Forgot password?
-                  </Link>
-                </div>
+                <Label htmlFor="password" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                  <Lock className="h-4 w-4 text-gray-500" />
+                  Password
+                </Label>
                 <div className="relative">
                   <Input 
                     id="password" 
@@ -198,30 +176,6 @@ export default function LoginPage() {
                 </Button>
               </div>
             </CardContent>
-            <div className="px-6 py-2">
-              <div className="relative flex items-center justify-center">
-                <div className="border-t w-full border-gray-300"></div>
-                <div className="absolute bg-white px-4 text-xs uppercase text-gray-500 font-semibold">or continue with</div>
-              </div>
-            </div>
-            <div className="px-6 py-4 flex gap-4">
-              <Button 
-                type="button" 
-                variant="outline" 
-                className="flex-1 gap-2 bg-white hover:bg-gray-50 transition-colors duration-300"
-              >
-                <Github className="h-5 w-5" /> 
-                <span className="hidden sm:inline">GitHub</span>
-              </Button>
-              <Button 
-                type="button" 
-                variant="outline" 
-                className="flex-1 gap-2 bg-white hover:bg-gray-50 transition-colors duration-300"
-              >
-                <Twitter className="h-5 w-5 text-blue-400" /> 
-                <span className="hidden sm:inline">Twitter</span>
-              </Button>
-            </div>
             <CardFooter className="flex flex-col pt-2 pb-6 border-t">
               <div className="text-center text-sm pt-4">
                 <span className="text-gray-600">Don't have an account?</span>{" "}

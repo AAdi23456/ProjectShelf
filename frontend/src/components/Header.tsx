@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/context/AuthContext';
 import { Menu, X, ChevronDown, User, LogOut, LayoutDashboard, BookOpen, Search } from 'lucide-react';
+import ThemeSwitcher from '@/components/ThemeSwitcher';
 
 export function Header() {
   const { user, logout } = useAuth();
@@ -19,7 +20,7 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur-sm">
+    <header className="sticky top-0 z-50 w-full border-b bg-background backdrop-blur-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center">
@@ -44,7 +45,7 @@ export function Header() {
         
         {/* Mobile menu button */}
         <button 
-          className="md:hidden p-2 rounded-md hover:bg-gray-100"
+          className="md:hidden p-2 rounded-md hover:bg-muted"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           {isMenuOpen ? (
@@ -56,12 +57,14 @@ export function Header() {
         
         {/* Desktop auth buttons */}
         <div className="hidden md:flex items-center gap-4">
+          <ThemeSwitcher />
+          
           {isAuthenticated ? (
             <div className="flex items-center gap-4 relative">
               <Button 
                 variant="ghost" 
                 size="sm"
-                className="flex items-center gap-2 hover:bg-gray-100"
+                className="flex items-center gap-2 hover:bg-muted"
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
               >
                 <Avatar className="h-8 w-8">
@@ -78,7 +81,7 @@ export function Header() {
               </Button>
               
               {isUserMenuOpen && (
-                <div className="absolute top-full right-0 mt-2 w-48 bg-white border rounded-md shadow-lg p-1 z-50">
+                <div className="absolute top-full right-0 mt-2 w-48 bg-card border rounded-md shadow-lg p-1 z-50">
                   <Link href={`/${user?.username}`}>
                     <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => setIsUserMenuOpen(false)}>
                       <User className="h-4 w-4 mr-2" />
@@ -91,7 +94,13 @@ export function Header() {
                       Dashboard
                     </Button>
                   </Link>
-                  <Button variant="ghost" size="sm" className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50" onClick={handleLogout}>
+                  <Link href="/dashboard/themes">
+                    <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => setIsUserMenuOpen(false)}>
+                      <LayoutDashboard className="h-4 w-4 mr-2" />
+                      Themes
+                    </Button>
+                  </Link>
+                  <Button variant="ghost" size="sm" className="w-full justify-start text-destructive hover:bg-destructive/10" onClick={handleLogout}>
                     <LogOut className="h-4 w-4 mr-2" />
                     Logout
                   </Button>
@@ -104,7 +113,7 @@ export function Header() {
                 <Button variant="ghost" size="sm">Login</Button>
               </Link>
               <Link href="/register">
-                <Button size="sm" className="bg-primary text-white hover:bg-primary/90">Sign Up</Button>
+                <Button size="sm">Sign Up</Button>
               </Link>
             </>
           )}
@@ -113,27 +122,31 @@ export function Header() {
       
       {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-white border-t px-4 py-3 shadow-lg">
+        <div className="md:hidden bg-card border-t px-4 py-3 shadow-lg">
           <nav className="flex flex-col space-y-3">
-            <Link href="/explore" className="flex items-center text-sm font-medium p-2 hover:bg-gray-100 rounded-md" onClick={() => setIsMenuOpen(false)}>
+            <Link href="/explore" className="flex items-center text-sm font-medium p-2 hover:bg-muted rounded-md" onClick={() => setIsMenuOpen(false)}>
               <BookOpen className="mr-2 h-4 w-4" />
               Explore
             </Link>
-            <Link href="/search" className="flex items-center text-sm font-medium p-2 hover:bg-gray-100 rounded-md" onClick={() => setIsMenuOpen(false)}>
+            <Link href="/search" className="flex items-center text-sm font-medium p-2 hover:bg-muted rounded-md" onClick={() => setIsMenuOpen(false)}>
               <Search className="mr-2 h-4 w-4" />
               Search
             </Link>
             {isAuthenticated && (
               <>
-                <Link href="/dashboard" className="flex items-center text-sm font-medium p-2 hover:bg-gray-100 rounded-md" onClick={() => setIsMenuOpen(false)}>
+                <Link href="/dashboard" className="flex items-center text-sm font-medium p-2 hover:bg-muted rounded-md" onClick={() => setIsMenuOpen(false)}>
                   <LayoutDashboard className="mr-2 h-4 w-4" />
                   Dashboard
                 </Link>
-                <Link href={`/${user?.username}`} className="flex items-center text-sm font-medium p-2 hover:bg-gray-100 rounded-md" onClick={() => setIsMenuOpen(false)}>
+                <Link href="/dashboard/themes" className="flex items-center text-sm font-medium p-2 hover:bg-muted rounded-md" onClick={() => setIsMenuOpen(false)}>
+                  <LayoutDashboard className="mr-2 h-4 w-4" />
+                  Themes
+                </Link>
+                <Link href={`/${user?.username}`} className="flex items-center text-sm font-medium p-2 hover:bg-muted rounded-md" onClick={() => setIsMenuOpen(false)}>
                   <User className="mr-2 h-4 w-4" />
                   Profile
                 </Link>
-                <Button variant="ghost" className="flex items-center justify-start text-sm font-medium p-2 text-red-500 hover:bg-red-50 rounded-md" onClick={() => { handleLogout(); setIsMenuOpen(false); }}>
+                <Button variant="ghost" className="flex items-center justify-start text-sm font-medium p-2 text-destructive hover:bg-destructive/10 rounded-md" onClick={() => { handleLogout(); setIsMenuOpen(false); }}>
                   <LogOut className="mr-2 h-4 w-4" />
                   Logout
                 </Button>
@@ -149,6 +162,9 @@ export function Header() {
                 </Link>
               </div>
             )}
+            <div className="pt-2 border-t flex justify-center">
+              <ThemeSwitcher />
+            </div>
           </nav>
         </div>
       )}

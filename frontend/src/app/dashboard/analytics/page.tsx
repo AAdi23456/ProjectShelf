@@ -172,7 +172,7 @@ export default function AnalyticsDashboard() {
                   <div className="space-y-6">
                     {projectStats.projectBreakdown.map((project: any) => (
                       <div key={project.projectId} className="flex justify-between items-center">
-                        <div className="font-medium">{project.Project.title}</div>
+                        <div className="font-medium">{project.project.title}</div>
                         <div className="text-muted-foreground">{project.count} views</div>
                       </div>
                     ))}

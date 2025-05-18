@@ -217,3 +217,57 @@
 .react-datepicker__month-text:hover {
   background-color: hsl(var(--accent));
 }
+
+/* Enhanced DatePicker styles */
+.react-datepicker-popper {
+  z-index: 100 !important;
+}
+
+.react-datepicker__month-container {
+  font-size: 0.875rem;
+}
+
+.react-datepicker__month-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0.25rem;
+}
+
+.react-datepicker__month-text {
+  margin: 0.25rem;
+  padding: 0.5rem;
+  text-align: center;
+  flex: 1 0 30%;
+  border-radius: 0.25rem;
+  transition: all 0.2s ease;
+}
+
+.react-datepicker__month-text:hover {
+  background-color: hsl(var(--primary)/0.1);
+}
+
+.react-datepicker__month-text--selected {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  font-weight: 500;
+}
+
+.react-datepicker__triangle {
+  display: none;
+}
+
+/* Add a subtle animation for the date picker */
+@keyframes datePickerFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.react-datepicker-popper {
+  animation: datePickerFadeIn 0.2s ease-out;
+}

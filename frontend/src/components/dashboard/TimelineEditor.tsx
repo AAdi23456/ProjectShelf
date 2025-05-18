@@ -1,12 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import DatePicker from 'react-datepicker';
-import "react-datepicker/dist/react-datepicker.css";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Plus, Trash2, MoveUp, MoveDown, Calendar } from 'lucide-react';
+import { Plus, Trash2, MoveUp, MoveDown, Calendar as CalendarIcon } from 'lucide-react';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { format } from 'date-fns';
 
 interface TimelineItem {
   date: string;
@@ -21,7 +22,7 @@ interface TimelineEditorProps {
 
 export default function TimelineEditor({ timeline = [], onChange }: TimelineEditorProps) {
   const [date, setDate] = useState('');
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
 
@@ -33,9 +34,7 @@ export default function TimelineEditor({ timeline = [], onChange }: TimelineEdit
     // Format the date
     let formattedDate = date;
     if (selectedDate) {
-      const month = selectedDate.toLocaleString('default', { month: 'short' });
-      const year = selectedDate.getFullYear();
-      formattedDate = `${month} ${year}`;
+      formattedDate = format(selectedDate, 'MMM yyyy');
     }
 
     const newItem: TimelineItem = {
@@ -48,7 +47,7 @@ export default function TimelineEditor({ timeline = [], onChange }: TimelineEdit
     
     // Reset form
     setDate('');
-    setSelectedDate(null);
+    setSelectedDate(undefined);
     setTitle('');
     setDescription('');
   };
@@ -76,12 +75,10 @@ export default function TimelineEditor({ timeline = [], onChange }: TimelineEdit
     onChange(updatedTimeline);
   };
 
-  const handleDateChange = (date: Date | null) => {
+  const handleDateChange = (date: Date | undefined) => {
     setSelectedDate(date);
     if (date) {
-      const month = date.toLocaleString('default', { month: 'short' });
-      const year = date.getFullYear();
-      setDate(`${month} ${year}`);
+      setDate(format(date, 'MMM yyyy'));
     } else {
       setDate('');
     }
@@ -89,7 +86,7 @@ export default function TimelineEditor({ timeline = [], onChange }: TimelineEdit
 
   const handleManualDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDate(e.target.value);
-    setSelectedDate(null);
+    setSelectedDate(undefined);
   };
 
   return (
@@ -109,22 +106,31 @@ export default function TimelineEditor({ timeline = [], onChange }: TimelineEdit
                   placeholder="e.g., Jan 2023 or Q1 2023"
                   className="pr-10"
                 />
-                <div className="absolute right-2 top-0 bottom-0 flex items-center">
-                  <DatePicker
-                    selected={selectedDate}
-                    onChange={handleDateChange}
-                    dateFormat="MMM yyyy"
-                    showMonthYearPicker
-                    customInput={
-                      <button type="button">
-                        <Calendar className="h-4 w-4 text-muted-foreground" />
-                      </button>
-                    }
-                    className="absolute opacity-0 w-full h-full cursor-pointer"
-                  />
-                </div>
               </div>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="flex items-center gap-1">
+                    <CalendarIcon className="h-4 w-4" />
+                    <span>Calendar</span>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="end">
+                  <Calendar
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={handleDateChange}
+                    initialFocus
+                    captionLayout="dropdown-buttons"
+                    fromYear={2000}
+                    toYear={2030}
+                    defaultMonth={selectedDate}
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              You can type a date or use the calendar to select
+            </p>
           </div>
           
           <div>

@@ -142,6 +142,7 @@ export const getProjectViewStats = async (req, res) => {
         include: [
           {
             model: Project,
+            as: 'project', // Specify the alias defined in the model association
             attributes: ['id', 'title'],
             required: true
           }
@@ -150,7 +151,7 @@ export const getProjectViewStats = async (req, res) => {
           'projectId',
           [sequelize.fn('count', sequelize.col('ProjectView.id')), 'count']
         ],
-        group: ['projectId', 'Project.id', 'Project.title'],
+        group: ['projectId', 'project.id', 'project.title'], // Use lowercase to match the alias
         order: [[sequelize.fn('count', sequelize.col('ProjectView.id')), 'DESC']]
       });
     }
