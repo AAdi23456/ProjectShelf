@@ -33,10 +33,6 @@ export function Header() {
               <BookOpen className="mr-1 h-4 w-4" />
               Explore
             </Link>
-            <Link href="/search" className="flex items-center text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
-              <Search className="mr-1 h-4 w-4" />
-              Search
-            </Link>
             {isAuthenticated && (
               <Link href="/dashboard" className="flex items-center text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
                 <LayoutDashboard className="mr-1 h-4 w-4" />

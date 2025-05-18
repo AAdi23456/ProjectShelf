@@ -20,7 +20,7 @@ export function Footer() {
               Create dynamic and beautiful portfolios with modular case studies for designers, developers, and creative professionals.
             </p>
             
-            <div className="pt-4">
+            {/* <div className="pt-4">
               <h4 className="text-sm font-medium mb-3">Subscribe to our newsletter</h4>
               <div className="flex gap-2 max-w-sm">
                 <Input 
@@ -36,7 +36,7 @@ export function Footer() {
               <p className="text-xs text-muted-foreground mt-2">
                 Get the latest updates and resources directly to your inbox.
               </p>
-            </div>
+            </div> */}
           </div>
           
           <div className="space-y-4">
