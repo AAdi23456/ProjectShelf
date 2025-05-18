@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
+import MediaRenderer from '@/components/MediaRenderer';
 
 interface Project {
   id: string;
@@ -7,10 +8,11 @@ interface Project {
   description: string;
   coverImage?: string;
   createdAt: string;
-  mediaItems: Array<{
+  mediaItems?: Array<{
     id: string;
     url: string;
-    type: string;
+    type: 'IMAGE' | 'VIDEO';
+    caption?: string;
   }>;
 }
 
@@ -20,20 +22,35 @@ interface ProjectCardProps {
 }
 
 export default function ProjectCard({ project, username }: ProjectCardProps) {
-  // Get the first media item as cover image, or use project.coverImage if available
-  const coverImage = project.coverImage || 
-    (project.mediaItems && project.mediaItems.length > 0 
-      ? project.mediaItems[0].url 
-      : '/placeholder-project.jpg');
+  // Check if valid media items exist
+  const hasMediaItems = project.mediaItems && project.mediaItems.length > 0 && project.mediaItems[0]?.url;
+  
+  // Determine if the first media is a video
+  const firstMediaIsVideo = hasMediaItems && project.mediaItems?.[0]?.type === 'VIDEO';
+  
+  // Create a media object for rendering
+  const media = hasMediaItems && project.mediaItems
+    ? {
+        url: project.mediaItems[0]?.url || '',
+        type: project.mediaItems[0]?.type || 'IMAGE' as const,
+        caption: project.mediaItems[0]?.caption
+      }
+    : {
+        url: project.coverImage || '/placeholder-project.jpg',
+        type: 'IMAGE' as const,
+        caption: project.title
+      };
 
   return (
     <Link href={`/${username}/projects/${project.id}`}>
       <Card className="overflow-hidden h-full transition-all hover:shadow-md hover:-translate-y-1">
         <div className="w-full h-48 overflow-hidden">
-          <img 
-            src={coverImage} 
-            alt={project.title}
-            className="w-full h-full object-cover"
+          <MediaRenderer 
+            media={media}
+            aspectRatio="auto" 
+            className="w-full h-full"
+            showCaption={false}
+            isPreview={true}
           />
         </div>
         <CardContent className="p-5">

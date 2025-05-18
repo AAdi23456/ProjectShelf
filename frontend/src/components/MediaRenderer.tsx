@@ -14,6 +14,7 @@ interface MediaRendererProps {
   className?: string;
   captionClassName?: string;
   showCaption?: boolean;
+  isPreview?: boolean;
 }
 
 export default function MediaRenderer({
@@ -21,26 +22,40 @@ export default function MediaRenderer({
   aspectRatio = 'auto',
   className = '',
   captionClassName = '',
-  showCaption = true
+  showCaption = true,
+  isPreview = false
 }: MediaRendererProps) {
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
 
   // Function to determine aspect ratio class
   const aspectRatioClass = 
     aspectRatio === 'square' ? 'aspect-square' :
     aspectRatio === 'video' ? 'aspect-video' : '';
 
-  // Safety check for excessively long URLs
+  // Safety check for excessively long URLs or missing URLs
   useEffect(() => {
+    if (!media.url) {
+      setHasError(true);
+      setErrorMessage('Media URL is missing');
+      return;
+    }
+    
     if (media.url.length > 2000) {
       setHasError(true);
       setErrorMessage('URL is too long to process');
-    } else {
-      setHasError(false);
-      setErrorMessage(null);
+      return;
     }
-  }, [media.url]);
+
+    setHasError(false);
+    setErrorMessage(null);
+
+    // Generate thumbnail for video if it's a preview
+    if (media.type === 'VIDEO') {
+      generateVideoThumbnail(media.url);
+    }
+  }, [media]);
 
   // Helper function to determine if a URL is from YouTube
   const isYouTubeUrl = (url: string): boolean => {
@@ -50,6 +65,31 @@ export default function MediaRenderer({
   // Helper function to determine if a URL is from Vimeo
   const isVimeoUrl = (url: string): boolean => {
     return url.includes('vimeo.com');
+  };
+
+  // Helper to generate video thumbnail
+  const generateVideoThumbnail = (url: string) => {
+    // For YouTube videos
+    if (isYouTubeUrl(url)) {
+      const videoIdMatch = 
+        url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?]+)/) || [];
+      const videoId = videoIdMatch[1];
+      
+      if (videoId) {
+        setThumbnailUrl(`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`);
+        return;
+      }
+    }
+    
+    // For Vimeo videos (would require API call - simplified here)
+    if (isVimeoUrl(url)) {
+      // Use a placeholder
+      setThumbnailUrl('/video-thumbnail-placeholder.svg');
+      return;
+    }
+    
+    // Default fallback
+    setThumbnailUrl('/video-thumbnail-placeholder.svg');
   };
 
   // Helper to ensure proper embed URL format
@@ -90,7 +130,33 @@ export default function MediaRenderer({
     return url;
   };
 
-  if (media.type === 'VIDEO') {
+  // For video previews, display the thumbnail instead
+  if (media.type === 'VIDEO' && isPreview && thumbnailUrl) {
+    return (
+      <div className={`${className}`}>
+        <div className={`relative ${aspectRatioClass} bg-gray-100`}>
+          <img 
+            src={thumbnailUrl} 
+            alt={media.caption || 'Video thumbnail'} 
+            className="w-full h-full object-cover" 
+            onError={() => setHasError(true)}
+          />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="bg-black/70 rounded-full p-3">
+              <Youtube className="h-8 w-8 text-white" />
+            </div>
+          </div>
+        </div>
+        {showCaption && media.caption && (
+          <div className={`p-2 text-sm text-muted-foreground ${captionClassName}`}>
+            {media.caption}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  if (media.type === 'VIDEO' && !isPreview) {
     const embedUrl = getEmbedUrl(media.url);
     
     return (
@@ -118,7 +184,7 @@ export default function MediaRenderer({
     return (
       <div className={`w-full flex flex-col items-center justify-center bg-gray-100 ${aspectRatioClass} ${className}`}>
         <ImageOff className="h-8 w-8 text-gray-400 mb-2" />
-        <span className="text-sm text-gray-500">{errorMessage || 'Image unavailable'}</span>
+        <span className="text-sm text-gray-500">{errorMessage || 'Media unavailable'}</span>
       </div>
     );
   }
@@ -127,7 +193,7 @@ export default function MediaRenderer({
     <div className={`${className}`}>
       <div className={`relative ${aspectRatioClass} bg-gray-100`}>
         <img 
-          src={media.url} 
+          src={media.url || '/placeholder-project.jpg'} 
           alt={media.caption || 'Media image'} 
           className="w-full h-full object-cover" 
           onError={() => setHasError(true)}

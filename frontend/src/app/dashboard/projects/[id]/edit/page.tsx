@@ -14,6 +14,7 @@ import MediaGalleryEditor from '@/components/dashboard/MediaGalleryEditor';
 import TimelineEditor from '@/components/dashboard/TimelineEditor';
 import TechnologiesEditor from '@/components/dashboard/TechnologiesEditor';
 import OutcomesEditor from '@/components/dashboard/OutcomesEditor';
+import MediaRenderer from '@/components/MediaRenderer';
 
 interface TimelineItem {
   date: string;
@@ -354,10 +355,15 @@ export default function ProjectEditorPage() {
             {/* Cover Image */}
             {project.coverImage && (
               <div className="w-full h-64 bg-gray-100 mb-8 rounded-lg overflow-hidden">
-                <img 
-                  src={project.coverImage} 
-                  alt={project.title} 
-                  className="w-full h-full object-cover"
+                <MediaRenderer 
+                  media={{
+                    url: project.coverImage,
+                    type: 'IMAGE',
+                    caption: project.title
+                  }} 
+                  aspectRatio="auto"
+                  className="w-full h-full"
+                  showCaption={false}
                 />
               </div>
             )}
@@ -379,9 +385,25 @@ export default function ProjectEditorPage() {
                   {project.mediaItems.map((item, index) => (
                     <div key={item.id || index} className="bg-gray-100 rounded-lg overflow-hidden">
                       {item.type === 'VIDEO' ? (
-                        <iframe src={item.url} className="w-full aspect-video" frameBorder="0" allowFullScreen></iframe>
+                        <MediaRenderer 
+                          media={{
+                            url: item.url,
+                            type: 'VIDEO',
+                            caption: item.caption
+                          }} 
+                          aspectRatio="video"
+                          isPreview={true}
+                        />
                       ) : (
-                        <img src={item.url} alt={item.caption || 'Project image'} className="w-full h-full object-cover" />
+                        <MediaRenderer 
+                          media={{
+                            url: item.url,
+                            type: 'IMAGE',
+                            caption: item.caption
+                          }} 
+                          aspectRatio="square"
+                          showCaption={false}
+                        />
                       )}
                       {item.caption && <p className="p-2 text-sm text-gray-600">{item.caption}</p>}
                     </div>

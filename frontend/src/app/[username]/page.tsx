@@ -15,14 +15,16 @@ interface Project {
   mediaItems: any[];
 }
 
-interface Portfolio {
+interface User {
   id: string;
   username: string;
   name: string;
-  bio: string;
+  bio: string | null;
   avatarUrl?: string;
-  role: string;
-  createdAt: string;
+}
+
+interface Portfolio {
+  user: User;
   projects: Project[];
 }
 
@@ -56,7 +58,11 @@ export default function UserPortfolio() {
         }
         
         const data = await response.json();
-        setPortfolio(data.portfolio);
+        // The response contains user and projects directly
+        setPortfolio({
+          user: data.user,
+          projects: data.projects || []
+        });
       } catch (err) {
         console.error('Error fetching portfolio:', err);
         setError('Could not load this portfolio. The user may not exist.');
@@ -92,18 +98,18 @@ export default function UserPortfolio() {
     <div className="container mx-auto py-8 px-4">
       <div className="mb-10">
         <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-          {portfolio.avatarUrl && (
+          {portfolio.user.avatarUrl && (
             <img 
-              src={portfolio.avatarUrl} 
-              alt={portfolio.name} 
+              src={portfolio.user.avatarUrl} 
+              alt={portfolio.user.name} 
               className="w-24 h-24 rounded-full object-cover border-2 border-primary/20"
             />
           )}
           <div>
-            <h1 className="text-3xl font-bold">{portfolio.name}</h1>
-            <p className="text-muted-foreground">@{portfolio.username}</p>
-            {portfolio.bio && (
-              <p className="max-w-2xl mt-4">{portfolio.bio}</p>
+            <h1 className="text-3xl font-bold">{portfolio.user.name}</h1>
+            <p className="text-muted-foreground">@{portfolio.user.username}</p>
+            {portfolio.user.bio && (
+              <p className="max-w-2xl mt-4">{portfolio.user.bio}</p>
             )}
           </div>
         </div>

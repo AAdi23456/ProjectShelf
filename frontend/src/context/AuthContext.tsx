@@ -198,6 +198,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     authSuccess('Successfully logged out');
     console.log('User logged out');
+    // Redirect to homepage after logout
+    window.location.href = '/';
   };
 
   const clearError = () => {
@@ -208,12 +210,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider value={{ 
       user, 
       loading, 
-      login,
-      register,
-      logout,
+    login,
+    register,
+    logout,
       error, 
-      clearError,
-      upgradeToCreator
+    clearError,
+    upgradeToCreator
     }}>
       {children}
     </AuthContext.Provider>

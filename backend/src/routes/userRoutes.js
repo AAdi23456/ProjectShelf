@@ -21,7 +21,7 @@ const generateToken = (user) => {
 // Register new user
 router.post('/register', async (req, res) => {
   try {
-    const { email, password, username, name, role = 'VISITOR' } = req.body;
+    const { email, password, username, name } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({
@@ -44,13 +44,13 @@ router.post('/register', async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create new user
+    // Create new user (always as CREATOR)
     const user = await User.create({
       email,
       password: hashedPassword,
       username,
       name,
-      role: role === 'CREATOR' ? 'CREATOR' : 'VISITOR'
+      role: 'CREATOR' // All users are creators by default
     });
 
     // Generate JWT token

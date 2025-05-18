@@ -14,12 +14,27 @@ export default function Home() {
           <p className="text-xl text-muted-foreground">
             Create dynamic portfolios with modular case studies for designers, developers, and writers.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
-            <Link href="/register">
-              <Button size="lg">Get Started</Button>
+          
+          {/* Two main options as requested */}
+          <div className="flex flex-col sm:flex-row gap-6 justify-center mt-12">
+            <Link href="/explore" className="w-full sm:w-auto">
+              <Button size="lg" variant="outline" className="w-full py-8 text-lg gap-2">
+                <span className="text-xl">🔍</span>
+                <div className="flex flex-col items-start">
+                  <span className="font-bold">Explore Portfolios</span>
+                  <span className="text-xs text-muted-foreground">Browse published work</span>
+                </div>
+              </Button>
             </Link>
-            <Link href="/examples">
-              <Button variant="outline" size="lg">View Examples</Button>
+            
+            <Link href="/login" className="w-full sm:w-auto">
+              <Button size="lg" className="w-full py-8 text-lg gap-2">
+                <span className="text-xl">✍️</span>
+                <div className="flex flex-col items-start">
+                  <span className="font-bold">Start as Creator</span>
+                  <span className="text-xs text-muted-foreground">Login or sign up</span>
+                </div>
+              </Button>
             </Link>
           </div>
         </div>
@@ -59,9 +74,14 @@ export default function Home() {
           <p className="text-muted-foreground text-lg mb-8">
             Join other creative professionals showcasing their best work on ProjectShelf.
           </p>
-          <Link href="/register">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/login">
             <Button size="lg">Create Your Portfolio</Button>
           </Link>
+            <Link href="/explore">
+              <Button variant="outline" size="lg">Explore Portfolios</Button>
+            </Link>
+          </div>
         </div>
       </section>
     </div>

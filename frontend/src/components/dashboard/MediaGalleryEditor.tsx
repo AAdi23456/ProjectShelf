@@ -226,6 +226,7 @@ export default function MediaGalleryEditor({
                 <MediaRenderer 
                   media={item} 
                   aspectRatio={item.type === 'VIDEO' ? 'video' : 'square'}
+                  isPreview={true}
                 />
                 
                 <div className="absolute top-2 right-2 flex space-x-1">

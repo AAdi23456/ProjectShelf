@@ -1,6 +1,7 @@
 import express from 'express';
-import { getUserPortfolio, getUserProject } from '../controllers/portfolioController.js';
+import { getUserPortfolio, getUserProject, getPublishedPortfolios } from '../controllers/portfolioController.js';
 import { authenticateToken } from '../middleware/auth.js';
+import { trackView, trackEngagement } from '../controllers/analyticsController.js';
 
 const router = express.Router();
 
@@ -17,10 +18,17 @@ const optionalAuth = (req, res, next) => {
   authenticateToken(req, res, next);
 };
 
+// Get all published portfolios
+router.get('/published', getPublishedPortfolios);
+
 // Get portfolio by username (public)
 router.get('/:username', optionalAuth, getUserPortfolio);
 
 // Get specific project from a user's portfolio (public)
 router.get('/:username/projects/:projectId', optionalAuth, getUserProject);
+
+// Analytics tracking routes
+router.post('/analytics/view', trackView);
+router.post('/analytics/engagement', trackEngagement);
 
 export default router; 

@@ -81,6 +81,7 @@ export default function MediaGallery({
                 media={item}
                 aspectRatio={item.type === 'VIDEO' ? 'video' : 'square'}
                 showCaption={false}
+                isPreview={true}
               />
             </div>
           ))}
